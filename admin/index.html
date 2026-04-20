@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Acceso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body class="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="login-brand-name">Ricardo Fajardo</div>
+      <div class="login-brand-sub">Panel de administracion</div>
+    </div>
+    <div class="login-box">
+      <div class="login-title">Iniciar sesion</div>
+      <div class="login-error" id="loginError"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="email" placeholder="admin@blog.local" required autocomplete="username">
+        </div>
+        <div class="form-group" style="margin-bottom:18px">
+          <label class="form-label">Contrasena</label>
+          <input type="password" class="form-input" id="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn">Entrar</button>
+      </form>
+      <p class="login-hint">Demo: <code>admin@blog.local</code> / <code>Admin123!</code></p>
+    </div>
+  </div>
+  <script>
+    if (localStorage.getItem('admin_token')) location.href = '/admin/dashboard.html';
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginError');
+      btn.disabled = true; btn.textContent = 'Entrando...'; err.style.display = 'none';
+      try {
+        const r = await fetch('/api/auth/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
+        });
+        const d = await r.json();
+        if (d.success) {
+          localStorage.setItem('admin_token', d.data.token);
+          localStorage.setItem('admin_user', JSON.stringify(d.data.user));
+          location.href = '/admin/dashboard.html';
+        } else { err.textContent = d.message || 'Credenciales incorrectas'; err.style.display = 'block'; }
+      } catch { err.textContent = 'Error de conexion'; err.style.display = 'block'; }
+      finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+    });
+  </script>
+</body>
+</html>

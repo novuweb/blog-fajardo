@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posts — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- MODAL ELIMINAR -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-title">Eliminar post</div>
+    <div class="modal-body">Esta accion no se puede deshacer.<span class="modal-item-name" id="deletePostName"></span></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancelar</button>
+      <button class="btn btn-danger" id="confirmDelete">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-name">Ricardo Fajardo</span><span class="sidebar-sub">Administracion</span></div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item">Dashboard</a>
+      <a href="/admin/posts.html"     class="nav-item active">Posts</a>
+      <a href="/admin/edit-post.html" class="nav-item">Nuevo post</a>
+      <a href="/admin/categories.html" class="nav-item">Categorias</a>
+      <a href="/" target="_blank"     class="nav-item">Ver web</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user" id="adminUser"></div>
+      <button class="btn-logout" id="logoutBtn">Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <div class="page-title">Posts</div>
+        <div class="page-sub">Todos los articulos del blog</div>
+      </div>
+      <a href="/admin/edit-post.html" class="btn btn-primary">Nuevo post</a>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" id="searchInput" class="form-input" style="width:220px" placeholder="Buscar por titulo...">
+      <select id="statusFilter" class="form-select" style="width:150px">
+        <option value="">Todos</option>
+        <option value="published">Publicados</option>
+        <option value="draft">Borradores</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <div id="postsTable"></div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('adminUser').textContent = getUser()?.name || '';
+  document.getElementById('logoutBtn').onclick = logout;
+
+  let allPosts = [], deleteId = null;
+
+  function renderPosts(posts) {
+    const el = document.getElementById('postsTable');
+    if (!posts.length) { el.innerHTML = '<p class="empty-msg">No se encontraron posts.</p>'; return; }
+    el.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr><th>Titulo</th><th>Estado</th><th>Categoria</th><th>Fecha</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          ${posts.map(p => `
+            <tr>
+              <td class="td-title" title="${p.title}">${p.title}</td>
+              <td><span class="badge ${p.status === 'published' ? 'badge-pub' : 'badge-draft'}">${p.status === 'published' ? 'Publicado' : 'Borrador'}</span></td>
+              <td>${p.category_name}</td>
+              <td>${fmtDate(p.published_at || p.created_at)}</td>
+              <td class="td-actions">
+                <a href="/post.html?id=${p.slug}" target="_blank" class="row-btn">Ver</a>
+                <a href="/admin/edit-post.html?id=${p.id}" class="row-btn">Editar</a>
+                <button class="row-btn del" onclick="askDelete('${p.id}','${p.title.replace(/'/g, "\\'")}')">Eliminar</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function applyFilter() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const s = document.getElementById('statusFilter').value;
+    renderPosts(allPosts.filter(p =>
+      (!q || p.title.toLowerCase().includes(q)) && (!s || p.status === s)
+    ));
+  }
+
+  function askDelete(id, name) {
+    deleteId = id;
+    document.getElementById('deletePostName').textContent = name;
+    openModal('deleteModal');
+  }
+
+  document.getElementById('confirmDelete').onclick = async () => {
+    const r = await fetch('/api/posts/' + deleteId, { method: 'DELETE', headers: authHeaders() });
+    const d = await r.json();
+    closeModal('deleteModal');
+    if (d.success) { showToast('Post eliminado', 'ok'); allPosts = allPosts.filter(p => p.id !== deleteId); applyFilter(); }
+    else showToast(d.message || 'Error', 'err');
+    deleteId = null;
+  };
+
+  document.getElementById('searchInput').addEventListener('input', applyFilter);
+  document.getElementById('statusFilter').addEventListener('change', applyFilter);
+
+  fetch('/api/posts?limit=200', { headers: { Authorization: 'Bearer ' + getToken() } })
+    .then(r => r.json())
+    .then(({ data }) => { allPosts = data; renderPosts(data); });
+</script>
+</body>
+</html>

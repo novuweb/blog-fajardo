@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Articulo — Ricardo Fajardo Hernandez</title>
+  <meta name="description" id="pageDesc" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Ricardo Fajardo</a>
+      <button class="nav-toggle" id="navToggle">Menu</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div id="postContent">
+      <div style="padding: 60px 0; color: var(--light); font-size: .85rem;">Cargando...</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-copy">Ricardo Fajardo Hernandez — Investigacion Antropologica de Canarias</span>
+      <nav class="footer-nav">
+        <a href="/">Inicio</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/admin/">Admin</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    const id = new URLSearchParams(location.search).get('id');
+    if (!id) location.href = '/blog.html';
+
+    function fmtDate(iso) {
+      return iso ? new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+    }
+
+    fetch('/api/posts/' + id)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(({ data: p }) => {
+        document.title = p.title + ' — Ricardo Fajardo Hernandez';
+        document.getElementById('pageDesc').content = p.excerpt || '';
+
+        const img = p.featured_image
+          ? `<div class="post-featured-img"><img src="${p.featured_image}" alt="${p.title}"></div>`
+          : '';
+
+        document.getElementById('postContent').innerHTML = `
+          <div class="post-header">
+            <div class="post-cat-label">${p.category_name}</div>
+            <h1 class="post-title">${p.title}</h1>
+            <div class="post-meta">
+              <span>${p.author}</span>
+              <span>${fmtDate(p.published_at || p.created_at)}</span>
+              <span>${p.reading_time_minutes} min de lectura</span>
+            </div>
+          </div>
+          ${img}
+          <div class="post-body">${p.content}</div>
+          <div class="post-nav" id="postNav"></div>
+        `;
+
+        fetch('/api/posts?limit=50')
+          .then(r => r.json())
+          .then(({ data }) => {
+            const idx  = data.findIndex(x => x.id === p.id);
+            const prev = data[idx + 1];
+            const next = data[idx - 1];
+            const nav  = document.getElementById('postNav');
+            if (!nav) return;
+            nav.innerHTML = `
+              <div>${prev ? `<div class="post-nav-item" onclick="location.href='/post.html?id=${prev.slug}'">
+                <div class="post-nav-label">Articulo anterior</div>
+                <div class="post-nav-title">${prev.title}</div>
+              </div>` : ''}</div>
+              <div style="text-align:right">${next ? `<div class="post-nav-item" onclick="location.href='/post.html?id=${next.slug}'">
+                <div class="post-nav-label">Articulo siguiente</div>
+                <div class="post-nav-title">${next.title}</div>
+              </div>` : ''}</div>
+            `;
+          });
+      })
+      .catch(() => {
+        document.getElementById('postContent').innerHTML = `
+          <div style="padding: 80px 0; text-align: center;">
+            <p style="color: var(--mid); margin-bottom: 20px;">Articulo no encontrado.</p>
+            <a href="/blog.html" style="font-size: .85rem; color: var(--black); border-bottom: 1px solid var(--border);">Ver todos los articulos</a>
+          </div>
+        `;
+      });
+
+    document.getElementById('navToggle').addEventListener('click', () =>
+      document.getElementById('navLinks').classList.toggle('open'));
+  </script>
+</body>
+</html>

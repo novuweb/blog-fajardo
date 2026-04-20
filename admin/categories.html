@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- MODAL CREAR/EDITAR -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal">
+    <div class="modal-title" id="catModalTitle">Nueva categoria</div>
+    <div class="form-group">
+      <label class="form-label">Nombre <span class="req">*</span></label>
+      <input type="text" class="form-input" id="catName" placeholder="Nombre de la categoria...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripcion</label>
+      <input type="text" class="form-input" id="catDesc" placeholder="Descripcion breve (opcional)...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <input type="color" class="form-input" id="catColor" value="#333333" style="height:38px;padding:3px">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Icono (opcional)</label>
+        <input type="text" class="form-input" id="catIcon" placeholder="Ej: A" maxlength="4">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('catModal')">Cancelar</button>
+      <button class="btn btn-primary"   id="saveCatBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div class="modal-overlay" id="deleteCatModal">
+  <div class="modal">
+    <div class="modal-title">Eliminar categoria</div>
+    <div class="modal-body">No se puede eliminar si tiene posts asignados.<span class="modal-item-name" id="deleteCatName"></span></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('deleteCatModal')">Cancelar</button>
+      <button class="btn btn-danger"    id="confirmDeleteCat">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-name">Ricardo Fajardo</span><span class="sidebar-sub">Administracion</span></div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item">Dashboard</a>
+      <a href="/admin/posts.html"     class="nav-item">Posts</a>
+      <a href="/admin/edit-post.html" class="nav-item">Nuevo post</a>
+      <a href="/admin/categories.html" class="nav-item active">Categorias</a>
+      <a href="/" target="_blank"     class="nav-item">Ver web</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user" id="adminUser"></div>
+      <button class="btn-logout" id="logoutBtn">Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <div class="page-title">Categorias</div>
+        <div class="page-sub">Organiza los articulos por tema</div>
+      </div>
+      <button class="btn btn-primary" id="newCatBtn">Nueva categoria</button>
+    </div>
+
+    <div class="section">
+      <div id="catsTable"></div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('adminUser').textContent = getUser()?.name || '';
+  document.getElementById('logoutBtn').onclick = logout;
+
+  let cats = [], editCatId = null, deleteCatId = null;
+
+  function renderCats() {
+    const el = document.getElementById('catsTable');
+    if (!cats.length) { el.innerHTML = '<p class="empty-msg">No hay categorias. Crea la primera.</p>'; return; }
+    el.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr><th>Nombre</th><th>Descripcion</th><th>Posts</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          ${cats.map(c => `
+            <tr>
+              <td>
+                <span style="display:inline-block;width:10px;height:10px;background:${c.color};border-radius:2px;margin-right:8px;vertical-align:middle"></span>
+                <strong>${c.name}</strong>
+              </td>
+              <td style="color:var(--light)">${c.description || '—'}</td>
+              <td>${c.post_count}</td>
+              <td class="td-actions">
+                <button class="row-btn" onclick="editCat('${c.id}')">Editar</button>
+                <button class="row-btn del" onclick="askDeleteCat('${c.id}','${c.name.replace(/'/g, "\\'")}')">Eliminar</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function loadCats() {
+    fetch('/api/categories').then(r => r.json()).then(({ data }) => { cats = data; renderCats(); });
+  }
+
+  document.getElementById('newCatBtn').onclick = () => {
+    editCatId = null;
+    document.getElementById('catModalTitle').textContent = 'Nueva categoria';
+    document.getElementById('catName').value  = '';
+    document.getElementById('catDesc').value  = '';
+    document.getElementById('catColor').value = '#333333';
+    document.getElementById('catIcon').value  = '';
+    openModal('catModal');
+  };
+
+  function editCat(id) {
+    const c = cats.find(x => x.id === id); if (!c) return;
+    editCatId = id;
+    document.getElementById('catModalTitle').textContent = 'Editar categoria';
+    document.getElementById('catName').value  = c.name;
+    document.getElementById('catDesc').value  = c.description || '';
+    document.getElementById('catColor').value = c.color || '#333333';
+    document.getElementById('catIcon').value  = c.icon || '';
+    openModal('catModal');
+  }
+
+  document.getElementById('saveCatBtn').onclick = async () => {
+    const name = document.getElementById('catName').value.trim();
+    if (!name) { showToast('El nombre es obligatorio', 'err'); return; }
+    const body = {
+      name,
+      description: document.getElementById('catDesc').value.trim(),
+      color: document.getElementById('catColor').value,
+      icon:  document.getElementById('catIcon').value.trim()
+    };
+    const url    = editCatId ? '/api/categories/' + editCatId : '/api/categories';
+    const method = editCatId ? 'PUT' : 'POST';
+    const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const d = await r.json();
+    closeModal('catModal');
+    if (d.success) { showToast(editCatId ? 'Categoria actualizada' : 'Categoria creada', 'ok'); loadCats(); }
+    else showToast(d.message || 'Error', 'err');
+  };
+
+  function askDeleteCat(id, name) {
+    deleteCatId = id;
+    document.getElementById('deleteCatName').textContent = name;
+    openModal('deleteCatModal');
+  }
+  document.getElementById('confirmDeleteCat').onclick = async () => {
+    const r = await fetch('/api/categories/' + deleteCatId, { method: 'DELETE', headers: authHeaders() });
+    const d = await r.json();
+    closeModal('deleteCatModal');
+    if (d.success) { showToast('Categoria eliminada', 'ok'); loadCats(); }
+    else showToast(d.message || 'No se puede eliminar (tiene posts asignados)', 'err');
+    deleteCatId = null;
+  };
+
+  loadCats();
+</script>
+</body>
+</html>

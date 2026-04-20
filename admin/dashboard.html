@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="sidebar-name">Ricardo Fajardo</span>
+      <span class="sidebar-sub">Administracion</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item active">Dashboard</a>
+      <a href="/admin/posts.html"     class="nav-item">Posts</a>
+      <a href="/admin/edit-post.html" class="nav-item">Nuevo post</a>
+      <a href="/admin/categories.html" class="nav-item">Categorias</a>
+      <a href="/" target="_blank"     class="nav-item">Ver web</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user" id="adminUser"></div>
+      <button class="btn-logout" id="logoutBtn">Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <div class="page-title" id="welcomeMsg">Dashboard</div>
+        <div class="page-sub">Resumen general del blog</div>
+      </div>
+      <a href="/admin/edit-post.html" class="btn btn-primary">Nuevo post</a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+      <div class="stat-block">
+        <div class="stat-num" id="statPublished">—</div>
+        <div class="stat-name">Publicados</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num" id="statDrafts">—</div>
+        <div class="stat-name">Borradores</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num" id="statCats">—</div>
+        <div class="stat-name">Categorias</div>
+      </div>
+    </div>
+
+    <!-- RECENT POSTS -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-head-title">Posts recientes</span>
+        <a href="/admin/posts.html" class="section-link">Ver todos</a>
+      </div>
+      <div id="recentPosts"></div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+<script>
+  requireAuth();
+  const user = getUser();
+  document.getElementById('welcomeMsg').textContent = 'Hola, ' + (user?.name?.split(' ')[0] || 'Admin');
+  document.getElementById('adminUser').textContent  = user?.name || '';
+  document.getElementById('logoutBtn').onclick = logout;
+
+  fetch('/api/stats', { headers: authHeaders() })
+    .then(r => r.json())
+    .then(({ data }) => {
+      document.getElementById('statPublished').textContent = data.published;
+      document.getElementById('statDrafts').textContent    = data.drafts;
+      document.getElementById('statCats').textContent      = data.categories;
+
+      const rp = document.getElementById('recentPosts');
+      if (!data.recent.length) { rp.innerHTML = '<p class="empty-msg">No hay posts todavia.</p>'; return; }
+      rp.innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr><th>Titulo</th><th>Estado</th><th>Categoria</th><th>Fecha</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${data.recent.map(p => `
+              <tr>
+                <td class="td-title">${p.title}</td>
+                <td><span class="badge ${p.status === 'published' ? 'badge-pub' : 'badge-draft'}">${p.status === 'published' ? 'Publicado' : 'Borrador'}</span></td>
+                <td>${p.category_name}</td>
+                <td>${fmtDate(p.updated_at)}</td>
+                <td><a href="/admin/edit-post.html?id=${p.id}" class="row-btn">Editar</a></td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    });
+</script>
+</body>
+</html>

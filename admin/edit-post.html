@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div id="toast"></div>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-name">Ricardo Fajardo</span><span class="sidebar-sub">Administracion</span></div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item">Dashboard</a>
+      <a href="/admin/posts.html"     class="nav-item">Posts</a>
+      <a href="/admin/edit-post.html" class="nav-item active">Nuevo post</a>
+      <a href="/admin/categories.html" class="nav-item">Categorias</a>
+      <a href="/" target="_blank"     class="nav-item">Ver web</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user" id="adminUser"></div>
+      <button class="btn-logout" id="logoutBtn">Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <a href="/admin/posts.html" class="page-back">← Volver a posts</a>
+
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <div class="page-title" id="pageTitle">Nuevo post</div>
+        <div class="page-sub save-status" id="saveStatus"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary" id="btnDraft">Guardar borrador</button>
+        <button class="btn btn-primary"   id="btnPublish">Publicar</button>
+      </div>
+    </div>
+
+    <div class="form-wrap">
+      <div class="form-cols">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div>
+          <div class="form-group">
+            <label class="form-label">Titulo <span class="req">*</span></label>
+            <input type="text" class="form-input" id="postTitle" placeholder="Titulo del articulo...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Contenido <span class="req">*</span></label>
+            <div class="editor-toolbar">
+              <button class="ed-btn" data-cmd="bold"><strong>N</strong></button>
+              <button class="ed-btn" data-cmd="italic"><em>C</em></button>
+              <button class="ed-btn" data-cmd="formatBlock" data-val="h2">H2</button>
+              <button class="ed-btn" data-cmd="formatBlock" data-val="h3">H3</button>
+              <button class="ed-btn" data-cmd="formatBlock" data-val="p">Parrafo</button>
+              <button class="ed-btn" data-cmd="insertUnorderedList">Lista</button>
+              <button class="ed-btn" data-cmd="formatBlock" data-val="blockquote">Cita</button>
+              <button class="ed-btn" data-cmd="createLink">Enlace</button>
+              <button class="ed-btn" data-cmd="removeFormat">Limpiar</button>
+            </div>
+            <div id="contentEditor" contenteditable="true"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Extracto</label>
+            <textarea class="form-textarea" id="postExcerpt" placeholder="Resumen breve del articulo (aparece en el listado)..." maxlength="250" rows="3"></textarea>
+            <div class="form-counter"><span id="excerptCount">0</span> / 250</div>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="editor-sidebar">
+
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-title">Estado</div>
+            <div class="sidebar-panel-body">
+              <select class="form-select" id="postStatus">
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-title">Categoria <span class="req">*</span></div>
+            <div class="sidebar-panel-body">
+              <select class="form-select" id="postCategory">
+                <option value="">Selecciona una categoria...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-title">Imagen destacada</div>
+            <div class="sidebar-panel-body">
+              <div class="upload-zone" id="uploadZone">
+                <p style="font-size:.8rem;color:var(--mid)">Haz clic para subir</p>
+                <p>JPG, PNG — max 5MB</p>
+              </div>
+              <div class="img-preview-wrap hidden" id="imgPreview">
+                <img id="previewImg" src="" alt="">
+                <button class="img-remove-btn" id="removeImg">x</button>
+              </div>
+              <input type="file" id="imageInput" accept="image/*" style="display:none">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('adminUser').textContent = getUser()?.name || '';
+  document.getElementById('logoutBtn').onclick = logout;
+
+  const editId = new URLSearchParams(location.search).get('id');
+  let currentImg = null;
+
+  if (editId) document.getElementById('pageTitle').textContent = 'Editar post';
+
+  // Load categories
+  fetch('/api/categories')
+    .then(r => r.json())
+    .then(({ data }) => {
+      const sel = document.getElementById('postCategory');
+      data.forEach(c => { sel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+      if (editId) loadPost();
+    });
+
+  async function loadPost() {
+    const { data: p } = await fetch('/api/posts/' + editId, {
+      headers: { Authorization: 'Bearer ' + getToken() }
+    }).then(r => r.json());
+    document.getElementById('postTitle').value   = p.title;
+    document.getElementById('contentEditor').innerHTML = p.content;
+    document.getElementById('postExcerpt').value = p.excerpt || '';
+    document.getElementById('postStatus').value  = p.status;
+    document.getElementById('postCategory').value = p.category_id;
+    updateCounters();
+    if (p.featured_image) {
+      currentImg = p.featured_image;
+      document.getElementById('previewImg').src = p.featured_image;
+      document.getElementById('imgPreview').classList.remove('hidden');
+      document.getElementById('uploadZone').classList.add('hidden');
+    }
+    document.getElementById('saveStatus').textContent = 'Guardado: ' + fmtDate(p.updated_at);
+  }
+
+  // Editor toolbar
+  document.querySelector('.editor-toolbar').addEventListener('click', e => {
+    const btn = e.target.closest('[data-cmd]');
+    if (!btn) return;
+    const cmd = btn.dataset.cmd, val = btn.dataset.val || null;
+    if (cmd === 'createLink') {
+      const url = prompt('URL del enlace:');
+      if (url) document.execCommand('createLink', false, url);
+    } else {
+      document.execCommand(cmd, false, val);
+    }
+    document.getElementById('contentEditor').focus();
+  });
+
+  function updateCounters() {
+    document.getElementById('excerptCount').textContent = document.getElementById('postExcerpt').value.length;
+  }
+  document.getElementById('postExcerpt').addEventListener('input', updateCounters);
+
+  // Image upload
+  const uploadZone = document.getElementById('uploadZone');
+  uploadZone.addEventListener('click', () => document.getElementById('imageInput').click());
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+  uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
+  document.getElementById('imageInput').addEventListener('change', e => handleFile(e.target.files[0]));
+
+  async function handleFile(file) {
+    if (!file || !file.type.startsWith('image/')) { showToast('Solo se permiten imagenes', 'err'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('Imagen demasiado grande (max 5MB)', 'err'); return; }
+    const fd = new FormData(); fd.append('image', file);
+    showToast('Subiendo imagen...');
+    const d = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + getToken() }, body: fd }).then(r => r.json());
+    if (d.success) {
+      currentImg = d.data.url;
+      document.getElementById('previewImg').src = d.data.url;
+      document.getElementById('imgPreview').classList.remove('hidden');
+      uploadZone.classList.add('hidden');
+      showToast('Imagen subida', 'ok');
+    } else showToast(d.message || 'Error al subir', 'err');
+  }
+
+  document.getElementById('removeImg').onclick = () => {
+    currentImg = null;
+    document.getElementById('previewImg').src = '';
+    document.getElementById('imgPreview').classList.add('hidden');
+    uploadZone.classList.remove('hidden');
+  };
+
+  // Save
+  async function save(status) {
+    const title      = document.getElementById('postTitle').value.trim();
+    const content    = document.getElementById('contentEditor').innerHTML.trim();
+    const category_id = document.getElementById('postCategory').value;
+
+    if (!title)       { showToast('El titulo es obligatorio', 'err'); return; }
+    if (!content || content === '<br>') { showToast('El contenido es obligatorio', 'err'); return; }
+    if (!category_id) { showToast('Selecciona una categoria', 'err'); return; }
+
+    const body = {
+      title, content, category_id, status,
+      excerpt: document.getElementById('postExcerpt').value.trim(),
+      featured_image: currentImg
+    };
+
+    document.getElementById('btnPublish').disabled = true;
+    document.getElementById('btnDraft').disabled   = true;
+
+    const url    = editId ? '/api/posts/' + editId : '/api/posts';
+    const method = editId ? 'PUT' : 'POST';
+    const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const d = await r.json();
+
+    document.getElementById('btnPublish').disabled = false;
+    document.getElementById('btnDraft').disabled   = false;
+
+    if (d.success) {
+      showToast(status === 'published' ? 'Post publicado' : 'Borrador guardado', 'ok');
+      document.getElementById('saveStatus').textContent = 'Guardado: ' + new Date().toLocaleTimeString('es-ES');
+      if (!editId) setTimeout(() => location.href = '/admin/edit-post.html?id=' + d.data.id, 900);
+    } else {
+      showToast(d.message || 'Error al guardar', 'err');
+    }
+  }
+
+  document.getElementById('btnDraft').onclick   = () => save('draft');
+  document.getElementById('btnPublish').onclick  = () => save('published');
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ricardo Fajardo Hernandez</title>
+  <meta name="description" content="Investigador en Antropologia de las Tradiciones Canarias.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body { margin: 0; overflow-x: hidden; }
+
+    .home-layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR IZQUIERDA AZUL ── */
+    .home-sidebar {
+      background: #1A56DB;
+      color: #fff;
+      padding: 48px 28px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-name {
+      font-family: 'Georgia', serif;
+      font-size: 1.4rem;
+      font-weight: normal;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: -.3px;
+    }
+
+    .sidebar-role {
+      font-size: .76rem;
+      color: rgba(255,255,255,.72);
+      line-height: 1.6;
+      margin-bottom: 36px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,.18);
+    }
+
+    .sidebar-nav-label {
+      font-size: .63rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 10px;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 0 0 36px 0;
+      padding: 0;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: .87rem;
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .sidebar-nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .sidebar-nav a.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 500; }
+
+    .sidebar-info {
+      margin-top: auto;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+
+    .sidebar-info-line {
+      font-size: .71rem;
+      color: rgba(255,255,255,.58);
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .sidebar-info-line strong {
+      color: rgba(255,255,255,.88);
+      font-weight: 500;
+    }
+
+    /* ── CONTENIDO DERECHO ── */
+    .home-main {
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    .home-main-inner {
+      padding: 48px 44px;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      grid-template-rows: auto 1fr;
+      gap: 0 32px;
+    }
+
+    /* columna texto ocupa ambas filas izquierda */
+    .home-text-col {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+
+    /* fotos en columna derecha */
+    .home-photos-col {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 6px;
+    }
+
+    .home-main-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+      font-weight: normal;
+      color: #111;
+      margin-bottom: 6px;
+      letter-spacing: -.4px;
+    }
+
+    .home-main-sub {
+      font-size: .87rem;
+      color: #555;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #DEDEDE;
+    }
+
+    /* ── FOTOS ── */
+    .home-photo img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      display: block;
+      border-radius: 3px;
+      border: 1px solid #DEDEDE;
+    }
+
+    .home-photo:first-child img { object-position: center 15%; }
+    .home-photo:last-child img  { object-position: center center; }
+
+    /* ── ARTICULOS ── */
+    .articles-label {
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #888;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #DEDEDE;
+    }
+
+    .article-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      border: 1px solid #DEDEDE;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+      text-align: center;
+    }
+
+    .article-row:hover { border-color: #1A56DB; box-shadow: 0 1px 6px rgba(26,86,219,.08); }
+    .article-row:hover .art-title { color: #1A56DB; }
+    .art-cat   { font-size: .68rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #1A56DB; }
+    .art-title { font-size: .9rem; color: #111; line-height: 1.4; transition: color .15s; }
+    .art-date  { font-size: .71rem; color: #aaa; }
+
+    .view-all-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: .8rem;
+      color: #1A56DB;
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .view-all-link:hover { color: #1344B8; }
+
+    /* ── FOOTER ── */
+    .home-footer {
+      border-top: 1px solid #DEDEDE;
+      padding: 16px 44px;
+      font-size: .71rem;
+      color: #888;
+    }
+
+    .home-footer a { color: #888; text-decoration: none; }
+    .home-footer a:hover { color: #111; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .home-main-inner { grid-template-columns: 1fr; padding: 28px 24px; }
+      .home-text-col, .home-photos-col { grid-column: 1; grid-row: auto; }
+      .home-photos-col { flex-direction: row; padding-top: 0; margin-bottom: 28px; }
+      .home-photo img { height: 160px; }
+    }
+    @media (max-width: 768px) {
+      .home-layout { grid-template-columns: 1fr; }
+      .home-sidebar { position: relative; height: auto; padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="home-layout">
+
+  <!-- SIDEBAR AZUL IZQUIERDA -->
+  <aside class="home-sidebar">
+    <div class="sidebar-name">Ricardo Fajardo<br>Hernandez</div>
+    <div class="sidebar-role">Investigador en Antropologia<br>de las Tradiciones Canarias</div>
+
+    <div class="sidebar-nav-label">Navegacion</div>
+    <ul class="sidebar-nav">
+      <li><a href="/" class="active">Inicio</a></li>
+      <li><a href="/blog.html">Blog</a></li>
+    </ul>
+
+    <div class="sidebar-info">
+      <div class="sidebar-info-line"><strong>Universidad de La Laguna</strong></div>
+      <div class="sidebar-info-line">Doctor en Antropologia, 2021</div>
+      <div class="sidebar-info-line">Sobresaliente Cum Laude</div>
+      <div class="sidebar-info-line" style="margin-top:10px"><strong>Lineas de investigacion</strong></div>
+      <div class="sidebar-info-line">Tradiciones festivas zoomorfas</div>
+      <div class="sidebar-info-line">Patrimonio inmaterial canario</div>
+      <div class="sidebar-info-line">Antropologia cultural</div>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO DERECHO -->
+  <div class="home-main">
+    <div class="home-main-inner">
+
+      <!-- COLUMNA TEXTO (izquierda/centro) -->
+      <div class="home-text-col">
+        <h1 class="home-main-title">Ricardo Fajardo Hernandez</h1>
+        <p class="home-main-sub">Investigador en Antropologia de las Tradiciones Canarias.<br>Doctor por la Universidad de La Laguna — Sobresaliente Cum Laude.</p>
+
+        <div class="articles-label">Articulos recientes</div>
+        <div id="articlesList">
+          <div style="padding:18px 0;color:#888;font-size:.82rem">Cargando...</div>
+        </div>
+
+        <a href="/blog.html" class="view-all-link">Ver todos los articulos &rarr;</a>
+      </div>
+
+      <!-- FOTOS (derecha) -->
+      <div class="home-photos-col">
+        <div class="home-photo">
+          <img src="/uploads/foto-tesis.jpg" alt="Ricardo Fajardo con su tesis doctoral">
+        </div>
+        <div class="home-photo">
+          <img src="/uploads/foto-biblioteca.jpg" alt="Ricardo Fajardo en la biblioteca">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="home-footer">
+      Ricardo Fajardo Hernandez &mdash; Investigacion Antropologica de Canarias &mdash;
+      <a href="/admin/">Admin</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function fmtDate(iso) {
+    return new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  fetch('/api/posts?limit=6')
+    .then(r => r.json())
+    .then(({ data }) => {
+      const el = document.getElementById('articlesList');
+      if (!data || !data.length) {
+        el.innerHTML = '<div style="padding:18px 0;color:#888;font-size:.82rem">No hay articulos publicados.</div>';
+        return;
+      }
+      el.innerHTML = data.map(p => `
+        <div class="article-row" onclick="location.href='/post.html?id=${p.slug}'">
+          <span class="art-cat">${p.category_name}</span>
+          <span class="art-title">${p.title}</span>
+          <span class="art-date">${fmtDate(p.published_at || p.created_at)}</span>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      document.getElementById('articlesList').innerHTML =
+        '<div style="padding:18px 0;color:#888;font-size:.82rem">Error al cargar articulos.</div>';
+    });
+</script>
+</body>
+</html>

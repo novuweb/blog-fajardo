@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Ricardo Fajardo Hernandez</title>
+  <meta name="description" content="Articulos sobre tradiciones canarias e investigacion antropologica.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Ricardo Fajardo</a>
+      <button class="nav-toggle" id="navToggle">Menu</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/blog.html" class="active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <div class="blog-intro">
+      <h1>Blog</h1>
+      <p>Articulos sobre tradiciones canarias e investigacion antropologica</p>
+    </div>
+
+    <div class="blog-controls" id="filtros">
+      <input type="text" class="search-input" id="searchInput" placeholder="Buscar articulos...">
+      <div id="filterCats" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="filter-btn active" data-cat="">Todos</button>
+      </div>
+    </div>
+
+    <div class="results-count" id="resultsCount"></div>
+
+    <div class="article-list" id="articlesList"></div>
+    <div class="no-results hidden" id="noResults">No se encontraron articulos.</div>
+
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-copy">Ricardo Fajardo Hernandez — Investigacion Antropologica de Canarias</span>
+      <nav class="footer-nav">
+        <a href="/">Inicio</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/admin/">Admin</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    let currentPage = 1, currentCat = '', searchTimeout;
+
+    function fmtDate(iso) {
+      return iso ? new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+    }
+
+    function loadPosts() {
+      const q = document.getElementById('searchInput').value.trim();
+      const params = new URLSearchParams({ page: currentPage, limit: 15 });
+      if (currentCat) params.set('category', currentCat);
+      if (q) params.set('search', q);
+
+      fetch('/api/posts?' + params)
+        .then(r => r.json())
+        .then(({ data, total, pages }) => {
+          const list = document.getElementById('articlesList');
+          const noR  = document.getElementById('noResults');
+          const cnt  = document.getElementById('resultsCount');
+
+          cnt.textContent = total ? total + ' articulo' + (total !== 1 ? 's' : '') : '';
+
+          if (!data || !data.length) {
+            list.innerHTML = '';
+            noR.classList.remove('hidden');
+          } else {
+            noR.classList.add('hidden');
+            list.innerHTML = data.map(p => `
+              <div class="article-row" onclick="location.href='/post.html?id=${p.slug}'">
+                <span class="article-date">${fmtDate(p.published_at || p.created_at)}</span>
+                <span class="article-title">${p.title}</span>
+                <span class="article-cat">${p.category_name}</span>
+              </div>
+            `).join('');
+          }
+
+          const pag = document.getElementById('pagination');
+          pag.innerHTML = '';
+          if (pages > 1) {
+            for (let i = 1; i <= pages; i++) {
+              const btn = document.createElement('button');
+              btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+              btn.textContent = i;
+              btn.onclick = () => { currentPage = i; loadPosts(); scrollTo(0, 0); };
+              pag.appendChild(btn);
+            }
+          }
+        });
+    }
+
+    fetch('/api/categories')
+      .then(r => r.json())
+      .then(({ data }) => {
+        const fc = document.getElementById('filterCats');
+        data.forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.dataset.cat = c.id;
+          btn.textContent = c.name;
+          btn.onclick = () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCat = c.id; currentPage = 1; loadPosts();
+          };
+          fc.appendChild(btn);
+        });
+        fc.querySelector('[data-cat=""]').onclick = () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          fc.querySelector('[data-cat=""]').classList.add('active');
+          currentCat = ''; currentPage = 1; loadPosts();
+        };
+      });
+
+    document.getElementById('searchInput').addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => { currentPage = 1; loadPosts(); }, 350);
+    });
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('cat')) currentCat = params.get('cat');
+    loadPosts();
+
+    document.getElementById('navToggle').addEventListener('click', () =>
+      document.getElementById('navLinks').classList.toggle('open'));
+  </script>
+</body>
+</html>

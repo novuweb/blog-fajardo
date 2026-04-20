@@ -1,0 +1,130 @@
+{
+  "users": [
+    {
+      "id": "usr-001",
+      "email": "admin@blog.local",
+      "password_hash": "$2a$10$SuXhpqlooH4ncHAWeVbUmu9uCuMcso5NvHc5x6ciBtSpzg5APwQIS",
+      "name": "Ricardo Fajardo",
+      "role": "admin",
+      "created_at": "2025-01-01T00:00:00Z",
+      "last_login": "2026-04-20T20:26:35.361Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-001",
+      "name": "Tradiciones Canarias",
+      "slug": "tradiciones-canarias",
+      "description": "Manifestaciones culturales y tradiciones populares de Canarias",
+      "color": "#D4AF37",
+      "icon": "🌴",
+      "post_count": 2
+    },
+    {
+      "id": "cat-002",
+      "name": "Investigación Antropológica",
+      "slug": "investigacion-antropologica",
+      "description": "Estudios y análisis antropológicos de culturas y tradiciones",
+      "color": "#4A90E2",
+      "icon": "🔬",
+      "post_count": 1
+    },
+    {
+      "id": "cat-003",
+      "name": "Libros y Publicaciones",
+      "slug": "libros-publicaciones",
+      "description": "Reseñas y noticias sobre libros publicados",
+      "color": "#7ED321",
+      "icon": "📚",
+      "post_count": 1
+    }
+  ],
+  "posts": [
+    {
+      "id": "post-001",
+      "title": "LOS TOROS DE TIAGUA",
+      "slug": "los-toros-de-tiagua",
+      "content": "<p>Los Toros de Tiagua son una de las tradiciones del carnaval canario menos conocidas. Se mantienen en la marginalidad y su actividad está casi abandonada, a expensas de que alguno de sus protagonistas, personas de edad avanzada, tengan el ánimo de ejecutarlas como Juan Parrilla en los carnavales de 2017. De resto pervive en el recuerdo de unas pocas personas mayores y es una joya de la antropología cultural de las Islas que no parece haber superado con éxito los avatares de la historia.</p><p>Los Toros se manifestaban con fuerza en los carnavales de Tiagua, pueblo perteneciente al municipio de Teguise, que tuvo alcalde pedáneo propio, y en otras localidades de la comarca e incluso de lugares apartados de la isla de Lanzarote. Salían ataviados con sus ropas tradicionales o con algunos cambios sustanciales con respecto a los de principio de siglo y hasta los años cincuenta. Luego dejaron de salir asiduamente en el pueblo pero su actividad, tímida, continuó desarrollándose gracias a la labor de don Sebastián López Ferrer 'Chanito' que los sacó en Arrecife en numerosas ocasiones entre los años sesenta y finales de los ochenta. También prestó algunos ejemplares para llevarlos al Carnaval de Tenerife que no fueron devueltos.</p><p>Doña Irene López Parrilla nos aporta una valiosa información. El padre de doña Irene, don Daniel López Pérez, era el menor de cinco hermanos y se vistió de Toro en las primeras décadas del siglo veinte. Sus cuatro hermanos: Mauricio, Marcial, Jordán y Emiliano López Pérez eran bastante mayores que él y se vistieron también de Toros. Marcial y Jordán se quedaron solteros. Tal vez por ello su actuación con los Toros de Tiagua fue más continuada y doña Irene aún recuerda a los jóvenes y niños aterrorizados «que vienen, que vienen los Toros de Marcial y Jordán pero fuera del pueblo decían que vienen los Toros de Tiagua. Estoy hablando de antes de la guerra civil».</p><p>La tradición en cuanto a sus inicios se nos pierde de la memoria de nuestros informantes. Doña Irene recuerda como su padre Daniel le decía «yo de pequeño, hacia 1900, ya hacían esto». Los Toros se perdieron unos años tras la guerra civil pero «en el cincuenta o cincuenta y uno, que nació mi hermano pequeño, volvieron a nacer. Los que yo vi eran de saco con cabeza, armazón, cola de vaca o toro y cuernos. Le hacían como toreando, el Toro se escapaba, les tenías miedo. No tocaban ni nada que yo recuerde».</p><p>Mediada la centuria una parte de la familia continuó la actividad principalmente en Tiagua y la otra parte en Tao, aunque siempre los llamaban los Toros de Tiagua. Éstos, por los años cincuenta, salieron a correr los Toros con personas de Soo, como Marcial Rodríguez, Vicente Pérez, Manuel Brito, Domingo Ramírez, Marcial García, Ventura Martín y Juan Rojas; de La Vegueta salía Juan Mota y de Muñique lo hacían Redusindo López y su hijo también Redusindo López.</p><p>Siguiendo la forma tradicional de realizar los Toros de Tiagua, de la manera en la que los recuerda don Cristóbal Guillén Cabrera, constan de una estructura interior de metal y madera. La parte principal es la de la cabeza, bastante grande en relación con el resto del Toro, con una columna de soporte que ajusta el resto del cuerpo.</p><p>Al final de la columna de madera se fija otra pequeña estructura metálica para darle el ancho de la parte de las caderas del animal. El cuerpo «se reviste con tela de saco teñida de color marrón, canelo, que previamente se ha cortado y dado forma». Don Cristóbal prepara la pintura añadiendo rojo y blanco para darle un tono colorado, como el del animal de verdad.</p><blockquote><p>«Yo vi los Toros por primera vez de pequeño. Incluso les teníamos miedo y corríamos de ellos porque les teníamos miedo porque éramos pequeños, con siete u ocho años. Era en los años treinta cuando yo me acuerdo, en el treinta y uno o treinta y dos, no más.» — Don Cristóbal Guillén Delgado</p></blockquote><p>Ya los Toros de Tiagua no son esperados como antaño por las distintas calles del pueblo aunque se les ve debatirse entre su poco futuro. En tiempos pasados hacían como que iban a embestir con sus cuernos, no faltaba algún empujón e incluso tirar por los suelos en un revolcón sin intención de dañar, en sus correrías y giros. Los asistentes corrían tras los toros pero frenaban su ímpetu cuando los Toros se giraban e iban a por ellos.</p>",
+      "excerpt": "Los Toros de Tiagua son una de las tradiciones del carnaval canario menos conocidas. Se mantienen en la marginalidad y su actividad está casi abandonada...",
+      "featured_image": null,
+      "category_id": "cat-001",
+      "category_name": "Tradiciones Canarias",
+      "category_color": "#D4AF37",
+      "author": "Ricardo Fajardo Hernández",
+      "status": "published",
+      "created_at": "2020-05-20T10:00:00Z",
+      "updated_at": "2026-04-20T20:41:11.195Z",
+      "published_at": "2020-05-20T10:00:00Z",
+      "seo_description": "Los Toros de Tiagua, tradición carnavalera de Lanzarote en peligro de extinción. Historia y testimonio de sus últimos protagonistas.",
+      "reading_time_minutes": 4,
+      "views_count": 2,
+      "deleted_at": null
+    },
+    {
+      "id": "post-002",
+      "title": "Benito y los Carneros de Tigaday",
+      "slug": "benito-y-los-carneros-de-tigaday",
+      "content": "<p>La Casa del Miedo, sede de los Carneros de Tigaday ha acogido la presentación del libro infantil editado por el Ayuntamiento de La Frontera y escrito por Ricardo M. Fajardo Hernández «Benito y los Carneros de Tigaday».</p><p>El alcalde, Pedro Miguel Ángel Acosta, destacaba esta publicación agradeciendo inicialmente a Benito, a Ramón, al presidente de la Asociación Iván, y a todos los carneros que han salido y salen en estos días manteniendo la tradición.</p><p>«Porque conociendo la historia se forja el futuro», reseñaba el alcalde quien comentaba que tras la lectura del libro con entusiasmo reconocía en la escritura la historia de la isla; cómo la tradición ha sido fruto de ese día a día y de las necesidades que ha padecido el pueblo herreño y que ha servido también para mostrarse al mundo.</p><p>El acto que presentaba la concejala responsable de esta iniciativa, Mercedes Álvarez, ha contado con la presencia de su autor, así como de Ramón Padrón y del presidente de la Asociación de los Carneros de Tigaday, Iván Padrón.</p><p>La concejala ha explicado el desarrollo de esta propuesta y ha querido agradecer «la disposición del autor para con ella, haciendo posible que ya los niños y jóvenes tengan un libro que refleje esta tradición del municipio, que cumple este año cinco ya desde que fuese declarada Bien de Interés Cultural de Canarias».</p><p>El autor, Ricardo M. Fajardo Hernández, ha explicado en el transcurso del acto como le sedujo la idea de escribir este cuento con un enfoque diferente, escrito para niños y adolescentes pero siempre con rigor histórico. «Espero que sea un homenaje a Benito y a todas las personas que respetan y mantienen la tradición».</p>",
+      "excerpt": "La Casa del Miedo, sede de los Carneros de Tigaday ha acogido la presentación del libro infantil editado por el Ayuntamiento de La Frontera...",
+      "featured_image": null,
+      "category_id": "cat-001",
+      "category_name": "Tradiciones Canarias",
+      "category_color": "#D4AF37",
+      "author": "Ricardo Fajardo Hernández",
+      "status": "published",
+      "created_at": "2021-06-15T10:00:00Z",
+      "updated_at": "2026-04-20T20:40:50.526Z",
+      "published_at": "2021-06-15T10:00:00Z",
+      "seo_description": "Presentación del libro infantil Benito y los Carneros de Tigaday, escrito por Ricardo Fajardo Hernández.",
+      "reading_time_minutes": 2,
+      "views_count": 5,
+      "deleted_at": null
+    },
+    {
+      "id": "post-003",
+      "title": "El antropólogo Ricardo Fajardo incluye en su tesis doctoral a los Carneros de Tigaday y a los Cochinos de Sabinosa",
+      "slug": "ricardo-fajardo-tesis-doctoral-carneros-tigaday-cochinos-sabinosa",
+      "content": "<p>A principio de diciembre, el investigador en temas tradicionales canarios, Ricardo Fajardo, defendió su tesis doctoral «Manifestaciones festivas de carácter zoomorfo en Canarias». Una treintena de personas se dieron cita en la Universidad de La Laguna, entre ellos el doctor Manuel Lorenzo Perera, director y tutor de la misma. Entre otras manifestaciones culturales tradicionales de Canarias, no faltaron los conocidos Carneros de Tigaday y los poco conocidos Cochinos de Sabinosa o Mascras de Cochinos de Sabinosa.</p><p>La exhaustiva investigación trata sobre figuras de animales fingidos en las fiestas de las Islas como Caballos de Fuego, Caballos Fufos o Fuscos, Diablos de Erjos, Mataculebra de Puerto de la Cruz, Toros de Tiagua, Burras de Güímar, Libreas de El Palmar, Buenavista, Los Silos y un largo etcétera, hasta llegar a citar medio centenar de manifestaciones zoomorfas.</p><p>La tesis es un estudio antropológico que se fundamentó en la transmisión oral de ciento dieciséis informantes seleccionados, tres decenas de ellos herreños. Las celebraciones se describen contextualizadas y ubicadas en el ciclo anual, distinguiendo rituales de performances o espectáculos donde prima más la diversión que lo simbólico.</p><p>Al margen de una densa descripción etnográfica, contextual e histórica, el autor, Ricardo Fajardo busca los nexos culturales que pudieran ligar estas teatralizaciones populares con su pasado, con cercanas manifestaciones o con un contexto cultural amplio. El documento incluye casi seiscientas fotografías descriptivas.</p><p>Concluye señalando que el caso canario es un proceso de transculturación, un proceso de asimilación y adaptación a una realidad insular con su recorrido histórico.</p><p>El tribunal fue formado por catedráticos de gran prestigio en el ámbito académico como Carles Santacana, de la Universidad Autónoma de Barcelona, Fernando Sabaté Bel, de la Universidad de La Laguna y Josep María Solé i Sabaté, de la Universidad de Barcelona, que actuó de presidente, quienes otorgaron sobresaliente cum laude, al investigador tinerfeño, muy vinculado además a la isla de El Hierro por lazos familiares y autor de los libros «Tejeguate, 20 años al son del tambor» y «Los Carneros de El Hierro, un estudio antropológico del carnaval tradicional».</p>",
+      "excerpt": "Ricardo Fajardo defendió su tesis doctoral «Manifestaciones festivas de carácter zoomorfo en Canarias» con sobresaliente cum laude en la Universidad de La Laguna...",
+      "featured_image": null,
+      "category_id": "cat-002",
+      "category_name": "Investigación Antropológica",
+      "category_color": "#4A90E2",
+      "author": "Ricardo Fajardo Hernández",
+      "status": "published",
+      "created_at": "2021-12-09T10:00:00Z",
+      "updated_at": "2021-12-09T10:00:00Z",
+      "published_at": "2021-12-09T10:00:00Z",
+      "seo_description": "Ricardo Fajardo defiende su tesis doctoral sobre manifestaciones festivas de carácter zoomorfo en Canarias con sobresaliente cum laude.",
+      "reading_time_minutes": 4,
+      "views_count": 5,
+      "deleted_at": null
+    },
+    {
+      "id": "post-4b6ebbde",
+      "title": "Olmo prueba",
+      "slug": "olmo-prueba",
+      "content": "prueba",
+      "excerpt": "funciona?",
+      "featured_image": "/uploads/1776717591144-mj0hiair1ho.jpg",
+      "category_id": "cat-003",
+      "category_name": "Libros y Publicaciones",
+      "category_color": "#7ED321",
+      "author": "Ricardo Fajardo",
+      "status": "published",
+      "created_at": "2026-04-20T20:39:53.563Z",
+      "updated_at": "2026-04-20T20:39:53.563Z",
+      "published_at": "2026-04-20T20:39:53.563Z",
+      "seo_description": "",
+      "reading_time_minutes": 1,
+      "views_count": 3,
+      "deleted_at": "2026-04-20T20:40:16.974Z"
+    }
+  ],
+  "settings": {
+    "site_name": "Ricardo Fajardo Hernández",
+    "site_description": "Investigación antropológica sobre tradiciones y cultura popular de Canarias",
+    "site_email": "contacto@ricardofajardo.com",
+    "site_author": "Ricardo Fajardo Hernández"
+  }
+}
